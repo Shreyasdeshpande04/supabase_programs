@@ -7,7 +7,6 @@ A complete beginner-friendly programs demonstrating:
 * 🔗 Table Relationships (Foreign Keys)
 * 📊 Filtering, Sorting, Pagination
 * ☁️ Supabase Storage Upload System
-* 🔒 Row Level Security (RLS)
 * 🌐 HTML + JavaScript Frontend Integration
 
 ---
@@ -126,10 +125,6 @@ Right click → Open with Live Server
 
 * Image upload
 * File management
-
-## 🔹 Security
-
-* Row Level Security (RLS)
 
 ---
 
