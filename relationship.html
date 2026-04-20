@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Users & Orders</title>
+</head>
+<body>
+
+<h2>Users & Orders</h2>
+
+<button onclick="getUsers()">Load Users</button>
+<button onclick="getOrders()">Load Orders</button>
+
+<h3>Users</h3>
+<ul id="users"></ul>
+
+<h3>Orders</h3>
+<ul id="orders"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabaseUrl = 'YOUR_SUPABASE_URL'
+const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'
+
+const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// ---------------- USERS ----------------
+window.getUsers = async function () {
+
+  const { data, error } = await client
+    .from('users')
+    .select('*');
+
+  const usersList = document.getElementById("users");
+  usersList.innerHTML = "";
+
+  if (error) {
+    usersList.innerHTML = "<li>Error loading users</li>";
+    return;
+  }
+
+  data.forEach(user => {
+    const li = document.createElement("li");
+    li.innerText = user.name + " | " + user.email;
+    usersList.appendChild(li);
+  });
+}
+
+// ---------------- ORDERS ----------------
+window.getOrders = async function () {
+
+  const { data, error } = await client
+    .from('orders')
+    .select('*');
+
+  const ordersList = document.getElementById("orders");
+  ordersList.innerHTML = "";
+
+  if (error) {
+    ordersList.innerHTML = "<li>Error loading orders</li>";
+    return;
+  }
+
+  data.forEach(order => {
+    const li = document.createElement("li");
+    li.innerText =
+      "User ID: " + order.user_id +
+      " | Product: " + order.product +
+      " | Price: ₹" + order.price;
+
+    ordersList.appendChild(li);
+  });
+}
+</script>
+
+</body>
+</html>

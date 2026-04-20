@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supabase API Fix</title>
+</head>
+<body>
+
+<h2>Fetch Data</h2>
+
+<button onclick="loadData()">Load Data</button>
+
+<ul id="output"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabaseUrl = 'YOUR_SUPABASE_URL'
+const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'
+
+// ONLY ONE CLIENT (IMPORTANT)
+const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// GLOBAL FUNCTION (fix onclick error)
+window.loadData = async function () {
+
+  const { data, error } = await client
+    .from('test')
+    .select('*');
+
+  const output = document.getElementById("output");
+  output.innerHTML = "";
+
+  if (error) {
+    console.log(error);
+    output.innerHTML = "<li>Error loading data</li>";
+    return;
+  }
+
+  data.forEach(item => {
+    const li = document.createElement("li");
+    li.innerText = JSON.stringify(item);
+    output.appendChild(li);
+  });
+}
+</script>
+
+</body>
+</html>

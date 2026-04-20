@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supabase Relationship Demo</title>
+</head>
+<body>
+
+<h2>Users with Orders (Relationship Demo)</h2>
+
+<button onclick="loadData()">Load Data</button>
+
+<h3>Result</h3>
+<ul id="output"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabaseUrl = 'YOUR_SUPABASE_URL'
+const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'
+
+const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// JOIN QUERY (important part)
+window.loadData = async function () {
+
+  const { data, error } = await client
+    .from('users')
+    .select(`
+      id,
+      name,
+      orders (
+        product
+      )
+    `);
+
+  const output = document.getElementById("output");
+  output.innerHTML = "";
+
+  if (error) {
+    output.innerHTML = "<li>Error loading data</li>";
+    console.log(error);
+    return;
+  }
+
+  data.forEach(user => {
+
+    let products = "";
+
+    if (user.orders && user.orders.length > 0) {
+      user.orders.forEach(o => {
+        products += o.product + " ";
+      });
+    } else {
+      products = "No Orders";
+    }
+
+    const li = document.createElement("li");
+    li.innerText = user.name + " → " + products;
+
+    output.appendChild(li);
+  });
+}
+</script>
+
+</body>
+</html>

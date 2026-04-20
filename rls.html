@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supabase Notes App</title>
+</head>
+<body>
+
+<h2>My Notes App (RLS Demo)</h2>
+
+<textarea id="note" placeholder="Write your note"></textarea>
+<br><br>
+
+<button onclick="addNote()">Add Note</button>
+<button onclick="loadNotes()">Load My Notes</button>
+
+<h3>My Notes</h3>
+<ul id="list"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabaseUrl = 'YOUR_SUPABASE_URL'
+const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'
+
+const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+let currentUser = null;
+
+// Get logged-in user
+async function getUser() {
+  const { data } = await client.auth.getUser();
+  currentUser = data.user;
+  console.log("USER:", currentUser);
+}
+
+// Add note
+window.addNote = async function () {
+
+  if (!currentUser) {
+    await getUser();
+  }
+
+  const content = document.getElementById("note").value;
+
+  const { data, error } = await client
+    .from('notes')
+    .insert([
+      {
+        user_id: currentUser.id,
+        content: content
+      }
+    ]);
+
+  if (error) {
+    console.log(error);
+    alert(error.message);
+  } else {
+    alert("Note added!");
+    loadNotes();
+  }
+}
+
+// Load notes
+window.loadNotes = async function () {
+
+  if (!currentUser) {
+    await getUser();
+  }
+
+  const { data, error } = await client
+    .from('notes')
+    .select('*')
+    .eq('user_id', currentUser.id);
+
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  data.forEach(n => {
+    const li = document.createElement("li");
+    li.innerText = n.content;
+    list.appendChild(li);
+  });
+}
+
+// auto load user
+getUser();
+</script>
+
+</body>
+</html>

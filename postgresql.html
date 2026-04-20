@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supabase PostgreSQL - Students</title>
+</head>
+<body>
+
+<h2>Students Data (PostgreSQL via Supabase)</h2>
+
+<button onclick="getStudents()">Load Students</button>
+
+<!-- OUTPUT AREA -->
+<ul id="output"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabaseUrl = 'YOUR_SUPABASE_URL'
+const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'
+
+
+// Create Supabase client
+const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// Fetch data from PostgreSQL table
+window.getStudents = async function () {
+
+  const { data, error } = await client
+    .from('students')
+    .select('*');
+
+  const output = document.getElementById("output");
+  output.innerHTML = "";
+
+  if (error) {
+    output.innerHTML = "<li>Error loading data</li>";
+    console.log(error);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    output.innerHTML = "<li>No students found</li>";
+    return;
+  }
+
+  data.forEach(student => {
+    const li = document.createElement("li");
+    li.innerText =
+      "Name: " + student.name +
+      " | Age: " + student.age;
+
+    output.appendChild(li);
+  });
+}
+</script>
+
+</body>
+</html>
