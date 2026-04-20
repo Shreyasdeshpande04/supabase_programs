@@ -102,7 +102,7 @@ Right click → Open with Live Server
 
 ---
 
-# 📊 6. FEATURES COVERED
+# 📊 FEATURES COVERED
 
 ## 🔹 Database
 
