@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supabase Test</title>
+</head>
+<body>
+
+<h2>Supabase Data Display</h2>
+
+<button onclick="getData()">Fetch Data</button>
+
+<!-- OUTPUT WILL SHOW HERE -->
+<ul id="output"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabaseUrl = 'YOUR_SUPABASE_URL'
+const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'
+
+
+// create client
+const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// function to fetch and show data in UI
+window.getData = async function () {
+
+  const { data, error } = await client
+    .from('test')
+    .select('*');
+
+  const output = document.getElementById("output");
+  output.innerHTML = "";
+
+  if (error) {
+    output.innerHTML = "<li>Error loading data</li>";
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    output.innerHTML = "<li>No data found</li>";
+    return;
+  }
+
+  data.forEach(item => {
+    const li = document.createElement("li");
+    li.innerText = item.name;   // change column if needed
+    output.appendChild(li);
+  });
+}
+</script>
+
+</body>
+</html>

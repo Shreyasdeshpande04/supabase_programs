@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supabase Items Pagination</title>
+</head>
+<body>
+
+<h2>Items (Filter + Sort + Pagination)</h2>
+
+<button onclick="loadPage(0)">Page 1</button>
+<button onclick="loadPage(3)">Page 2</button>
+
+<h3>Output</h3>
+<ul id="output"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabaseUrl = 'YOUR_SUPABASE_URL'
+const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'
+
+const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+
+window.loadPage = async function (offset) {
+
+  const { data, error } = await client
+    .from('items')
+    .select('*')
+    .gte('price', 2000)
+    .order('price', { ascending: false })
+    .range(offset, offset + 2);   // LIMIT 3 (0-2, 3-5)
+
+  showData(data, error);
+}
+
+
+
+function showData(data, error) {
+
+  const output = document.getElementById("output");
+  output.innerHTML = "";
+
+  if (error) {
+    output.innerHTML = "<li>Error loading data</li>";
+    console.log(error);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    output.innerHTML = "<li>No items found</li>";
+    return;
+  }
+
+  data.forEach(item => {
+    const li = document.createElement("li");
+    li.innerText =
+      item.name + " - ₹" + item.price;
+
+    output.appendChild(li);
+  });
+}
+
+
+</script>
+
+</body>
+</html>
